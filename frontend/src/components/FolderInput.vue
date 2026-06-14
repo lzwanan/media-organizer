@@ -28,7 +28,7 @@
       </div>
 
       <button
-        @click="$emit('browse')"
+        @click="openFolder"
         class="h-11 px-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-[13px] font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-750 hover:border-gray-300 dark:hover:border-gray-600 active:scale-[0.98] transition-all duration-150"
       >
         {{ $t("home.browse") }}
@@ -44,14 +44,30 @@
 
 <script setup lang="ts">
 import InputText from "primevue/inputtext";
+import { useToast } from "primevue/usetoast";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+const toast = useToast();
 
 defineProps<{
   modelValue: string;
   placeholder?: string;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   "update:modelValue": [value: string];
   browse: [];
 }>();
+
+async function openFolder() {
+  try {
+    // File System Access API — Chrome 86+, Edge 86+
+    const handle = await (window as any).showDirectoryPicker();
+    emit("update:modelValue", handle.name);
+  } catch (e: any) {
+    if (e.name === "AbortError") return; // user cancelled
+    toast.add({ severity: "info", summary: t("home.browse"), detail: t("toast.browseMsg"), life: 3000 });
+  }
+}
 </script>

@@ -5,11 +5,11 @@
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
-      Back to Preview
+      {{ $t('execute.backToPreview') }}
     </router-link>
 
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Execution Preview</h1>
-    <p class="text-sm text-gray-400 dark:text-gray-500 mb-8">Dry run — no files have been modified.</p>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ $t('execute.title') }}</h1>
+    <p class="text-sm text-gray-400 dark:text-gray-500 mb-8">{{ $t('execute.subtitle') }}</p>
 
     <SectionCard>
       <div class="space-y-3">
@@ -38,9 +38,9 @@
         :disabled="executing"
         class="px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-colors disabled:opacity-40"
       >
-        {{ executing ? 'Executing…' : 'Confirm & Execute' }}
+        {{ executing ? $t('execute.executing') : $t('execute.confirmBtn') }}
       </button>
-      <p class="mt-3 text-xs text-red-400 dark:text-red-500">⚠ This will move and rename files on disk.</p>
+      <p class="mt-3 text-xs text-red-400 dark:text-red-500">{{ $t('execute.warning') }}</p>
     </div>
   </div>
 </template>
@@ -48,12 +48,14 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useToast } from "primevue/usetoast";
 import { useScanStore } from "@/stores/scan";
 import { fetchExecute } from "@/api/client";
 import SectionCard from "@/components/SectionCard.vue";
 
 const router = useRouter();
+const { t } = useI18n();
 const toast = useToast();
 const scanStore = useScanStore();
 const executing = ref(false);
@@ -67,10 +69,10 @@ async function confirmExecute() {
     .map(n => ({ path: n.path, target_dir: n.recognized!.target_dir || "", target_name: n.recognized!.target_name || "" }));
   try {
     const result = await fetchExecute(execItems, scanStore.result.root_path, false);
-    toast.add({ severity: "success", summary: "Done", detail: `${result.success} renamed, ${result.failed} failed`, life: 5000 });
+    toast.add({ severity: "success", summary: t('common.done'), detail: `${result.success} ${t('execute.renamed')}, ${result.failed} ${t('execute.failed')}`, life: 5000 });
     router.push(`/report/${result.task_id}`);
   } catch (e: any) {
-    toast.add({ severity: "error", summary: "Error", detail: e.message || "Execute failed", life: 5000 });
+    toast.add({ severity: "error", summary: t('common.error'), detail: e.message || t('toast.execFailed'), life: 5000 });
   } finally {
     executing.value = false;
   }

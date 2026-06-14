@@ -43,7 +43,7 @@
 
         <!-- CTA -->
         <Button
-          :label="scanning ? 'Scanning…' : (targetDir.trim() ? $t('home.startScan') : $t('home.startScanDisabled'))"
+          :label="scanning ? $t('toast.scanning') : (targetDir.trim() ? $t('home.startScan') : $t('home.startScanDisabled'))"
           :disabled="!targetDir.trim() || scanning"
           :loading="scanning"
           severity="primary"
@@ -120,7 +120,7 @@ const features = computed(() => [
 ]);
 
 function browseDirectory() {
-  toast.add({ severity: "info", summary: "Browse", detail: "Desktop file picker coming soon. Paste a path for now.", life: 3000 });
+  toast.add({ severity: "info", summary: t('home.browse'), detail: t('toast.browseMsg'), life: 3000 });
 }
 
 async function startScan() {
@@ -133,8 +133,8 @@ async function startScan() {
     scanStore.setResult(result);
     router.push("/scan");
   } catch (e: any) {
-    const msg = e.response?.data?.detail || e.message || "Scan failed";
-    toast.add({ severity: "error", summary: "Error", detail: msg, life: 5000 });
+    const msg = e.response?.data?.detail || e.message || t('toast.scanFailed');
+    toast.add({ severity: "error", summary: t('common.error'), detail: msg, life: 5000 });
   } finally {
     scanning.value = false;
   }

@@ -3,7 +3,7 @@
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">{{ $t("nav.history") }}</h1>
 
     <div v-if="items.length === 0 && !loading" class="py-20 text-center text-gray-400 dark:text-gray-600">
-      No history yet.
+      {{ $t('history.empty') }}
     </div>
 
     <SectionCard v-else>

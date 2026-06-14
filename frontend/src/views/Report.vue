@@ -5,32 +5,32 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     </div>
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Organization Complete</h1>
-    <p class="text-gray-400 dark:text-gray-500 mb-8">All files have been renamed and reorganized.</p>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ $t('report.title') }}</h1>
+    <p class="text-gray-400 dark:text-gray-500 mb-8">{{ $t('report.subtitle') }}</p>
 
     <SectionCard>
       <div class="grid grid-cols-3 gap-6 text-center">
         <div>
           <div class="text-2xl font-bold text-emerald-500">{{ success }}</div>
-          <div class="text-xs text-gray-400 mt-1">Renamed</div>
+          <div class="text-xs text-gray-400 mt-1">{{ $t('report.renamed') }}</div>
         </div>
         <div>
           <div class="text-2xl font-bold text-red-500">{{ failed }}</div>
-          <div class="text-xs text-gray-400 mt-1">Failed</div>
+          <div class="text-xs text-gray-400 mt-1">{{ $t('report.failed') }}</div>
         </div>
         <div>
           <div class="text-2xl font-bold text-amber-500">{{ skipped }}</div>
-          <div class="text-xs text-gray-400 mt-1">Skipped</div>
+          <div class="text-xs text-gray-400 mt-1">{{ $t('report.skipped') }}</div>
         </div>
       </div>
     </SectionCard>
 
     <div class="mt-8 flex gap-3 justify-center">
       <router-link to="/" class="px-6 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-colors no-underline">
-        Back to Home
+        {{ $t('report.backHome') }}
       </router-link>
       <router-link to="/history" class="px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors no-underline">
-        View History
+        {{ $t('report.viewHistory') }}
       </router-link>
     </div>
   </div>

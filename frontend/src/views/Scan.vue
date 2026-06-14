@@ -133,7 +133,7 @@ function confirmDelete() {
   showConfirm.value = false;
   if (scanStore.result) scanStore.result.items = scanStore.result.items.filter(i => !selectedPaths.has(i.path));
   selectedPaths.clear();
-  toast.add({ severity: "success", summary: "Done", detail: "Items removed", life: 2000 });
+  toast.add({ severity: "success", summary: t('common.done'), detail: `${count} ${t('toast.itemsRemoved')}`, life: 2000 });
 }
 
 async function runExecute() {
@@ -152,7 +152,7 @@ async function runExecute() {
     (scanStore as any).execResult = result;
     router.push(`/execute/${result.task_id}`);
   } catch (e: any) {
-    toast.add({ severity: "error", summary: "Error", detail: e.message || "Execution failed", life: 5000 });
+    toast.add({ severity: "error", summary: t('common.error'), detail: e.message || t('toast.execFailed'), life: 5000 });
   }
 }
 
@@ -172,6 +172,6 @@ watch(namingStyle, async (style) => {
       const u = map.get(node.path);
       if (u && node.recognized) { node.recognized.target_name = u.target_name; node.recognized.target_dir = u.target_dir; node.recognized.target_path = u.target_path; }
     }
-  } catch { toast.add({ severity: "error", summary: "Error", detail: "Failed to update", life: 3000 }); }
+  } catch { toast.add({ severity: "error", summary: t('common.error'), detail: t('toast.renameFailed'), life: 3000 }); }
 });
 </script>

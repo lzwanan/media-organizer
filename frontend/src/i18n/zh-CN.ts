@@ -18,6 +18,8 @@ export default {
     },
     startScan: "开始扫描",
     startScanDisabled: "输入目录路径开始",
+    pathHint: "从文件管理器地址栏复制路径后粘贴到此处。",
+    saveRecent: "保存",
     features: {
       detect: {
         title: "智能识别",
@@ -80,7 +82,7 @@ export default {
     itemsRemoved: "项已移除",
     execFailed: "执行失败",
     renameFailed: "更新命名失败",
-    browseMsg: "桌面版将支持系统目录选择器。当前请手动输入或粘贴路径。",
+    browseMsg: "从文件管理器地址栏复制路径（如 D:\\Movies），粘贴到输入框即可。Mac 用户可将文件夹拖入终端获取路径。",
     scanning: "扫描中…",
   },
   scan: {

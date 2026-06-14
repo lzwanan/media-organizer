@@ -17,7 +17,8 @@
         <FolderInput
           v-model="targetDir"
           :placeholder="$t('home.targetDirPlaceholder')"
-          @browse="browseDirectory"
+          :recent-paths="recentPaths"
+          @save-recent="saveRecentPath"
         >
           <template #label>{{ $t("home.targetDir") }}</template>
           <template #hint>
@@ -119,8 +120,11 @@ const features = computed(() => [
   },
 ]);
 
-function browseDirectory() {
-  toast.add({ severity: "info", summary: t('home.browse'), detail: t('toast.browseMsg'), life: 3000 });
+function saveRecentPath(p: string) {
+  if (!recentPaths.value.includes(p)) {
+    recentPaths.value.unshift(p);
+    if (recentPaths.value.length > 5) recentPaths.value.pop();
+  }
 }
 
 async function startScan() {

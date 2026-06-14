@@ -18,6 +18,8 @@ export default {
     },
     startScan: "Start Scan",
     startScanDisabled: "Enter a directory to begin",
+    pathHint: "Copy the path from your file manager's address bar and paste here.",
+    saveRecent: "Save",
     features: {
       detect: {
         title: "Smart Detection",
@@ -80,7 +82,7 @@ export default {
     itemsRemoved: "items removed",
     execFailed: "Execution failed",
     renameFailed: "Failed to update names",
-    browseMsg: "Desktop will support native folder picker. Paste a path for now.",
+    browseMsg: "Copy the folder path from your file manager address bar (e.g. D:\\Movies) and paste here. Mac users can drag a folder into Terminal to get its path.",
     scanning: "Scanning…",
   },
   scan: {

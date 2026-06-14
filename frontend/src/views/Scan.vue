@@ -22,10 +22,26 @@
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
           {{ scanStore.result.root_path }}
         </h1>
-        <p class="text-sm text-gray-400 dark:text-gray-500">
+        <p class="text-sm text-gray-400 dark:text-gray-500 mb-4">
           {{ scanStore.result.total_count }} files · {{ scanStore.dirs.length }} folders
+          <span v-if="junkCount" class="text-red-500"> · {{ junkCount }} junk</span>
+          <span v-if="emptyCount" class="text-gray-400"> · {{ emptyCount }} empty dirs</span>
           {{ scanStore.result.root_type ? '· ' + scanStore.result.root_type : '' }}
         </p>
+
+        <!-- Filter tabs -->
+        <div class="flex gap-2 mb-6 flex-wrap">
+          <button v-for="f in filters" :key="f.key"
+            @click="activeFilter = f.key"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors"
+            :class="activeFilter === f.key
+              ? 'bg-indigo-500 text-white'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'"
+          >
+            {{ f.label }}
+            <span class="ml-1 opacity-70">{{ f.count }}</span>
+          </button>
+        </div>
       </header>
 
       <!-- File Tree -->
@@ -70,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useScanStore } from "@/stores/scan";
 import type { FileNodeResponse } from "@/api/client";
@@ -79,6 +95,7 @@ import TreeNode from "@/components/TreeNode.vue";
 
 const router = useRouter();
 const scanStore = useScanStore();
+const activeFilter = ref("all");
 
 onMounted(() => {
   if (!scanStore.result) {
@@ -86,11 +103,33 @@ onMounted(() => {
   }
 });
 
-/** Root-level children (depth 0 items directly under root_path) */
+const allItems = computed(() => scanStore.result?.items ?? []);
+
+const junkCount = computed(() => allItems.value.filter(n => n.junk).length);
+const emptyCount = computed(() => allItems.value.filter(n => n.empty).length);
+const movieCount = computed(() => allItems.value.filter(n => n.recognized?.media_type === "movie").length);
+const tvCount = computed(() => allItems.value.filter(n => n.recognized?.media_type === "tv").length);
+
+const filters = computed(() => [
+  { key: "all", label: "All", count: allItems.value.length },
+  { key: "movie", label: "Movies", count: movieCount.value },
+  { key: "tv", label: "TV", count: tvCount.value },
+  { key: "junk", label: "Junk", count: junkCount.value },
+  { key: "empty", label: "Empty", count: emptyCount.value },
+]);
+
+/** Root-level children filtered */
 const rootChildren = computed(() => {
   if (!scanStore.result) return [];
   const root = scanStore.result.root_path;
   const tree = scanStore.tree;
-  return tree[root] ?? [];
+  const all = tree[root] ?? [];
+
+  if (activeFilter.value === "all") return all;
+  if (activeFilter.value === "junk") return all.filter(n => n.junk);
+  if (activeFilter.value === "empty") return all.filter(n => n.empty);
+  if (activeFilter.value === "movie") return all.filter(n => n.recognized?.media_type === "movie");
+  if (activeFilter.value === "tv") return all.filter(n => n.recognized?.media_type === "tv");
+  return all;
 });
 </script>

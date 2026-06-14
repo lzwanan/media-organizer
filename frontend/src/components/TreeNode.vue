@@ -18,8 +18,27 @@
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
       </svg>
-      <span class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">{{ node.name }}</span>
-      <span class="text-xs text-gray-400 ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
+            {{ node.name }}
+          </span>
+          <!-- Badges -->
+          <span v-if="node.junk" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400">
+            Junk
+          </span>
+          <span v-if="node.empty" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500">
+            Empty
+          </span>
+        </div>
+        <!-- Directory naming preview -->
+        <div v-if="recInfo?.target_name && recInfo.target_name !== node.name" class="mt-0.5 pl-0">
+          <span class="text-xs text-indigo-500 dark:text-indigo-400">
+            → {{ recInfo.target_name }}
+          </span>
+        </div>
+      </div>
+      <span class="text-xs text-gray-400 ml-auto opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
         {{ childCount(node.path) }} items
       </span>
     </button>
@@ -54,7 +73,10 @@
         <span class="text-xs text-gray-500 dark:text-gray-500 truncate flex-1 font-mono">
           {{ node.name }}
         </span>
-        <span v-if="recInfo"
+        <span v-if="node.junk" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 shrink-0">
+          Junk
+        </span>
+        <span v-else-if="recInfo"
           class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
           :class="confidenceClass(recInfo.confidence)"
         >

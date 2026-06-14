@@ -180,6 +180,25 @@ def extract_edition(filename: str) -> Optional[str]:
     return None
 
 
+# ─── 广告/垃圾目录模式 ───────────────────────────────────
+
+JUNK_PATTERNS = [
+    re.compile(r"【.*?www\.\S+】", re.IGNORECASE),   # 【xxx www.site.com】
+    re.compile(r"#recycle", re.IGNORECASE),            # #recycle 回收站
+    re.compile(r"@Recycle", re.IGNORECASE),            # Synology @Recycle
+    re.compile(r"\.@__thumb", re.IGNORECASE),          # 缩略图缓存
+    re.compile(r"^广告|^ad[sv]?$|^推广", re.IGNORECASE),
+]
+
+
+def is_junk_name(name: str) -> bool:
+    """判断文件名/目录名是否为广告/垃圾/无用内容"""
+    for pat in JUNK_PATTERNS:
+        if pat.search(name):
+            return True
+    return False
+
+
 def match_filename(filename: str) -> list[dict]:
     """
     对单个文件名执行所有内置规则匹配

@@ -14,6 +14,7 @@ from backend.recognizer.pattern_matcher import is_junk_name
 from backend.namer.generator import NamingGenerator
 from backend.clients.translator import translate, get_api_key
 from backend.executor.executor import execute as execute_files, ExecutionItem
+from backend.db.database import init_db, record_history, get_history_list, get_history_detail
 
 
 router = APIRouter(prefix="/api")
@@ -163,6 +164,18 @@ async def execute_operation(req: ExecuteRequest):
         conflict_strategy=req.conflict_strategy or "skip",
     )
 
+    # 实际执行时记录到数据库
+    history_id = None
+    if not req.dry_run:
+        history_id = record_history(
+            root_path=req.root_path,
+            total=result.total,
+            success=result.success,
+            failed=result.failed,
+            skipped=result.skipped,
+            change_items=result.items,
+        )
+
     return {
         "task_id": f"exec_{uuid.uuid4().hex[:12]}",
         "total": result.total,
@@ -170,8 +183,22 @@ async def execute_operation(req: ExecuteRequest):
         "failed": result.failed,
         "skipped": result.skipped,
         "dry_run": result.dry_run,
+        "history_id": history_id,
         "items": result.items,
     }
+
+
+@router.get("/history")
+async def history_list(limit: int = 20):
+    return {"status": "ok", "items": get_history_list(limit)}
+
+
+@router.get("/history/{history_id}")
+async def history_detail(history_id: int):
+    detail = get_history_detail(history_id)
+    if not detail:
+        raise HTTPException(status_code=404, detail="History not found")
+    return {"status": "ok", "data": detail}
 
 
 @router.get("/status")
@@ -186,10 +213,25 @@ async def status():
 
 @router.get("/config")
 async def get_all_config():
-    return {
-        "status": "ok",
-        "data": ConfigManager.instance().all,
-    }
+    return {"status": "ok", "data": ConfigManager.instance().all}
+
+
+class ConfigSetRequest(BaseModel):
+    value: str
+
+
+@router.put("/config/{key:path}")
+async def set_config(key: str, req: ConfigSetRequest):
+    config = ConfigManager.instance()
+    config.set(key, req.value)
+    config.save()
+    return {"status": "ok"}
+
+
+@router.post("/config/reset")
+async def reset_config():
+    ConfigManager.instance().reset_to_default()
+    return {"status": "ok"}
 
 
 @router.post("/scan", response_model=ScanResponse)

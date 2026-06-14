@@ -34,22 +34,45 @@
 
     <div class="mt-8 text-center">
       <button
+        @click="confirmExecute"
+        :disabled="executing"
         class="px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-colors disabled:opacity-40"
-        disabled
       >
-        Confirm & Execute (coming soon)
+        {{ executing ? 'Executing…' : 'Confirm & Execute' }}
       </button>
+      <p class="mt-3 text-xs text-red-400 dark:text-red-500">⚠ This will move and rename files on disk.</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
 import { useScanStore } from "@/stores/scan";
+import { fetchExecute } from "@/api/client";
 import SectionCard from "@/components/SectionCard.vue";
 
-const route = useRoute();
+const router = useRouter();
+const toast = useToast();
 const scanStore = useScanStore();
+const executing = ref(false);
 const items = computed(() => (scanStore as any).execResult?.items ?? []);
+
+async function confirmExecute() {
+  if (!scanStore.result) return;
+  executing.value = true;
+  const execItems = scanStore.result.items
+    .filter(n => n.type === "file" && n.recognized?.target_name)
+    .map(n => ({ path: n.path, target_dir: n.recognized!.target_dir || "", target_name: n.recognized!.target_name || "" }));
+  try {
+    const result = await fetchExecute(execItems, scanStore.result.root_path, false);
+    toast.add({ severity: "success", summary: "Done", detail: `${result.success} renamed, ${result.failed} failed`, life: 5000 });
+    router.push(`/report/${result.task_id}`);
+  } catch (e: any) {
+    toast.add({ severity: "error", summary: "Error", detail: e.message || "Execute failed", life: 5000 });
+  } finally {
+    executing.value = false;
+  }
+}
 </script>

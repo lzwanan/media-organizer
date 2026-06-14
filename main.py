@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from backend.api.routes import router as api_router
+from backend.db.database import init_db
 
 # 确保 backend 包在路径中
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -31,6 +32,9 @@ def create_app() -> FastAPI:
 
     # API 路由
     app.include_router(api_router)
+
+    # 初始化数据库
+    init_db()
 
     # 生产模式：挂载前端静态文件
     frontend_dist = Path(__file__).resolve().parent / "frontend" / "dist"

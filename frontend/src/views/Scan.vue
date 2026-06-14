@@ -47,12 +47,13 @@
       <!-- File Tree -->
       <SectionCard>
         <div class="space-y-0.5">
-          <!-- Root files -->
           <TreeNode
             v-for="node in rootChildren"
             :key="node.path"
             :node="node"
             :tree="scanStore.tree"
+            :selected-paths="selectedPaths"
+            @toggle-select="toggleSelect"
           />
         </div>
 
@@ -67,35 +68,60 @@
       <div class="mt-8 flex justify-between items-center">
         <div class="flex items-center gap-4 text-sm text-gray-400">
           <span>{{ scanStore.files.length }} files</span>
-          <span>·</span>
-          <span class="text-emerald-600 dark:text-emerald-400">{{ scanStore.recognizedCount }} recognized</span>
-          <span v-if="scanStore.files.length !== scanStore.recognizedCount" class="text-amber-500">
-            {{ scanStore.files.length - scanStore.recognizedCount }} pending
+          <span v-if="selectedCount > 0" class="text-indigo-500 font-semibold">
+            {{ selectedCount }} selected
           </span>
         </div>
-        <button
-          class="px-5 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold
-                 transition-colors active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
-          disabled
-        >
-          Continue to Preview
-        </button>
+        <div class="flex gap-3">
+          <button v-if="selectedCount > 0"
+            @click="deleteSelected"
+            class="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold
+                   transition-colors active:scale-[0.98]"
+          >
+            Delete ({{ selectedCount }})
+          </button>
+          <button
+            class="px-5 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold
+                   transition-colors active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+            disabled
+          >
+            Continue
+          </button>
+        </div>
       </div>
+
+      <!-- Confirm dialog -->
+      <Dialog v-model:visible="showConfirm" header="Confirm Delete" :modal="true" :style="{ width: '400px' }">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Delete {{ selectedCount }} selected items? This action cannot be undone.
+        </p>
+        <template #footer>
+          <button @click="showConfirm = false"
+            class="px-4 py-2 rounded-lg text-sm text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">Cancel</button>
+          <button @click="confirmDelete"
+            class="px-4 py-2 rounded-lg text-sm bg-red-500 hover:bg-red-600 text-white font-semibold">Delete</button>
+        </template>
+      </Dialog>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
+import Dialog from "primevue/dialog";
 import { useScanStore } from "@/stores/scan";
 import type { FileNodeResponse } from "@/api/client";
 import SectionCard from "@/components/SectionCard.vue";
 import TreeNode from "@/components/TreeNode.vue";
 
 const router = useRouter();
+const toast = useToast();
 const scanStore = useScanStore();
 const activeFilter = ref("all");
+const selectedPaths = reactive<Set<string>>(new Set());
+const showConfirm = ref(false);
 
 onMounted(() => {
   if (!scanStore.result) {
@@ -132,4 +158,29 @@ const rootChildren = computed(() => {
   if (activeFilter.value === "tv") return all.filter(n => n.recognized?.media_type === "tv");
   return all;
 });
+
+const selectedCount = computed(() => selectedPaths.size);
+
+function toggleSelect(path: string) {
+  if (selectedPaths.has(path)) {
+    selectedPaths.delete(path);
+  } else {
+    selectedPaths.add(path);
+  }
+}
+
+function deleteSelected() {
+  showConfirm.value = true;
+}
+
+function confirmDelete() {
+  showConfirm.value = false;
+  const count = selectedPaths.size;
+  // Remove selected nodes from store
+  if (scanStore.result) {
+    scanStore.result.items = scanStore.result.items.filter(i => !selectedPaths.has(i.path));
+  }
+  selectedPaths.clear();
+  toast.add({ severity: "success", summary: "Deleted", detail: `${count} items removed from list.`, life: 3000 });
+}
 </script>

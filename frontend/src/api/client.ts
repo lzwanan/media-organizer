@@ -39,4 +39,30 @@ export async function fetchConfig(): Promise<ConfigResponse> {
   return data;
 }
 
+// ─── Scan types ───────────────────────────────────────
+
+export interface FileNodeResponse {
+  path: string;
+  name: string;
+  type: string;
+  size: number;
+  parent: string;
+  depth: number;
+  extension: string;
+}
+
+export interface ScanResponse {
+  task_id: string;
+  root_path: string;
+  root_type: string | null;
+  total_count: number;
+  items: FileNodeResponse[];
+}
+
+/** 扫描目录 */
+export async function fetchScan(rootPath: string): Promise<ScanResponse> {
+  const { data } = await api.post<ScanResponse>("/scan", { root_path: rootPath, strategy: "smart" });
+  return data;
+}
+
 export default api;

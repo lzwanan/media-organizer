@@ -43,8 +43,9 @@
 
         <!-- CTA -->
         <Button
-          :label="targetDir.trim() ? $t('home.startScan') : $t('home.startScanDisabled')"
-          :disabled="!targetDir.trim()"
+          :label="scanning ? 'Scanning…' : (targetDir.trim() ? $t('home.startScan') : $t('home.startScanDisabled'))"
+          :disabled="!targetDir.trim() || scanning"
+          :loading="scanning"
           severity="primary"
           class="w-full !h-12 !text-[15px] !font-semibold !rounded-xl"
           @click="startScan"
@@ -75,17 +76,23 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
 import SectionCard from "@/components/SectionCard.vue";
 import FolderInput from "@/components/FolderInput.vue";
 import StrategyPicker from "@/components/StrategyPicker.vue";
+import { fetchScan } from "@/api/client";
+import { useScanStore } from "@/stores/scan";
 
+const router = useRouter();
 const { t } = useI18n();
 const toast = useToast();
+const scanStore = useScanStore();
 const targetDir = ref("");
 const strategy = ref("smart");
+const scanning = ref(false);
 const recentPaths = ref<string[]>([]);
 
 const strategies = computed(() => [
@@ -116,8 +123,20 @@ function browseDirectory() {
   toast.add({ severity: "info", summary: "Browse", detail: "Desktop file picker coming soon. Paste a path for now.", life: 3000 });
 }
 
-function startScan() {
-  if (!targetDir.value.trim()) return;
-  toast.add({ severity: "success", summary: "Scanning", detail: targetDir.value, life: 2000 });
+async function startScan() {
+  const dir = targetDir.value.trim();
+  if (!dir) return;
+
+  scanning.value = true;
+  try {
+    const result = await fetchScan(dir);
+    scanStore.setResult(result);
+    router.push("/scan");
+  } catch (e: any) {
+    const msg = e.response?.data?.detail || e.message || "Scan failed";
+    toast.add({ severity: "error", summary: "Error", detail: msg, life: 5000 });
+  } finally {
+    scanning.value = false;
+  }
 }
 </script>

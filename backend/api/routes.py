@@ -13,6 +13,7 @@ from backend.recognizer.recognizer import recognize, RecognizedInfo, MediaType
 from backend.recognizer.pattern_matcher import is_junk_name
 from backend.namer.generator import NamingGenerator
 from backend.clients.translator import translate, get_api_key
+from backend.executor.executor import execute as execute_files, ExecutionItem
 
 
 router = APIRouter(prefix="/api")
@@ -137,6 +138,40 @@ async def rename_preview(req: RenamePreviewRequest):
         })
 
     return {"status": "ok", "style": req.style, "items": results}
+
+
+class ExecuteRequest(BaseModel):
+    items: list[dict]   # [{path, target_dir, target_name}]
+    root_path: str
+    dry_run: bool = True
+    conflict_strategy: Optional[str] = "skip"
+
+
+@router.post("/execute")
+async def execute_operation(req: ExecuteRequest):
+    """执行文件整理（默认 dry_run 预览模式）"""
+    items = [ExecutionItem(
+        path=i["path"],
+        target_dir=i.get("target_dir", ""),
+        target_name=i.get("target_name", ""),
+    ) for i in req.items]
+
+    result = execute_files(
+        items=items,
+        root_path=req.root_path,
+        dry_run=req.dry_run,
+        conflict_strategy=req.conflict_strategy or "skip",
+    )
+
+    return {
+        "task_id": f"exec_{uuid.uuid4().hex[:12]}",
+        "total": result.total,
+        "success": result.success,
+        "failed": result.failed,
+        "skipped": result.skipped,
+        "dry_run": result.dry_run,
+        "items": result.items,
+    }
 
 
 @router.get("/status")

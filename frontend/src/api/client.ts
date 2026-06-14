@@ -96,4 +96,20 @@ export async function fetchRenamePreview(items: Array<{ path: string; original_n
   return data;
 }
 
+export interface ExecuteResult {
+  task_id: string;
+  total: number;
+  success: number;
+  failed: number;
+  skipped: number;
+  dry_run: boolean;
+  items: Array<{ path: string; target: string; status: string; error?: string }>;
+}
+
+/** 执行整理 */
+export async function fetchExecute(items: Array<{ path: string; target_dir?: string; target_name?: string }>, rootPath: string, dryRun = true): Promise<ExecuteResult> {
+  const { data } = await api.post("/execute", { items, root_path: rootPath, dry_run: dryRun });
+  return data;
+}
+
 export default api;

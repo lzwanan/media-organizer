@@ -49,9 +49,14 @@
 
       <!-- Bottom bar -->
       <div class="mt-8 flex justify-between items-center">
-        <span class="text-sm text-gray-400">
-          {{ scanStore.files.length }} of {{ scanStore.result.total_count }} files selected
-        </span>
+        <div class="flex items-center gap-4 text-sm text-gray-400">
+          <span>{{ scanStore.files.length }} files</span>
+          <span>·</span>
+          <span class="text-emerald-600 dark:text-emerald-400">{{ scanStore.recognizedCount }} recognized</span>
+          <span v-if="scanStore.files.length !== scanStore.recognizedCount" class="text-amber-500">
+            {{ scanStore.files.length - scanStore.recognizedCount }} pending
+          </span>
+        </div>
         <button
           class="px-5 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold
                  transition-colors active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"

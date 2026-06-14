@@ -21,6 +21,22 @@ export const useScanStore = defineStore("scan", {
     /** 目录节点 */
     dirs: (state) => state.result?.items.filter((n) => n.type === "directory") ?? [],
 
+    /** 已识别的文件数 */
+    recognizedCount: (state) => {
+      if (!state.result) return 0;
+      return state.result.items.filter(
+        (n) => n.type === "file" && n.recognized !== null
+      ).length;
+    },
+
+    /** 高置信度（≥0.85）自动确认的文件数 */
+    autoConfirmCount: (state) => {
+      if (!state.result) return 0;
+      return state.result.items.filter(
+        (n) => n.type === "file" && n.recognized && n.recognized.confidence >= 0.85
+      ).length;
+    },
+
     /** 构建目录树：{ [parentPath]: children[] } */
     tree(): Record<string, FileNodeResponse[]> {
       const map: Record<string, FileNodeResponse[]> = {};

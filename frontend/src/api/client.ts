@@ -41,6 +41,20 @@ export async function fetchConfig(): Promise<ConfigResponse> {
 
 // ─── Scan types ───────────────────────────────────────
 
+export interface RecognizedInfo {
+  title: string | null;
+  title_zh: string | null;
+  title_en: string | null;
+  year: number | null;
+  season: number | null;
+  episode: number | null;
+  quality: string | null;
+  edition: string | null;
+  confidence: number;
+  media_type: string;
+  source: string;
+}
+
 export interface FileNodeResponse {
   path: string;
   name: string;
@@ -49,6 +63,7 @@ export interface FileNodeResponse {
   parent: string;
   depth: number;
   extension: string;
+  recognized: RecognizedInfo | null;
 }
 
 export interface ScanResponse {

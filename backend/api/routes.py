@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from backend.config_manager import ConfigManager
 from backend.scanner.scanner import FileNode, ScanResult, scan_directory
+from backend.recognizer.recognizer import recognize
 
 
 router = APIRouter(prefix="/api")
@@ -28,9 +29,10 @@ class FileNodeResponse(BaseModel):
     parent: str
     depth: int
     extension: str
+    recognized: Optional[dict] = None
 
     @classmethod
-    def from_node(cls, node: FileNode) -> "FileNodeResponse":
+    def from_node(cls, node: FileNode, recognized: Optional[dict] = None) -> "FileNodeResponse":
         return cls(
             path=node.path,
             name=node.name,
@@ -39,6 +41,7 @@ class FileNodeResponse(BaseModel):
             parent=node.parent,
             depth=node.depth,
             extension=node.extension,
+            recognized=recognized,
         )
 
 
@@ -87,10 +90,21 @@ async def scan(req: ScanRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
     task_id = f"scan_{uuid.uuid4().hex[:12]}"
+
+    # 对每个文件运行识别
+    items: list[FileNodeResponse] = []
+    for node in result.items:
+        rec = None
+        if node.type == "file":
+            info = recognize(node.name)
+            if info:
+                rec = info.to_dict()
+        items.append(FileNodeResponse.from_node(node, recognized=rec))
+
     return ScanResponse(
         task_id=task_id,
         root_path=result.root_path,
         root_type=result.root_type,
         total_count=result.total_count,
-        items=[FileNodeResponse.from_node(n) for n in result.items],
+        items=items,
     )

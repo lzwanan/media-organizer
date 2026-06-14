@@ -53,5 +53,10 @@
     "dry_run_default": true,
     "batch_size": 100
   },
+  "translators": {
+    "google": {
+      "api_key": ""
+    }
+  },
   "custom_patterns": []
 }

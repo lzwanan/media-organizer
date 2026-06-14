@@ -84,6 +84,7 @@ class ConfigManager:
             },
             "tmdb": {"api_key": "", "language": "zh-CN", "cache_ttl_hours": 168},
             "execution": {"conflict_strategy": "skip", "backup_before_rename": True, "dry_run_default": True, "batch_size": 100},
+            "translators": {"google": {"api_key": ""}},
             "custom_patterns": [],
         }
 

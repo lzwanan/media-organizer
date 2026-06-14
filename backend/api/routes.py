@@ -12,6 +12,7 @@ from backend.scanner.scanner import FileNode, ScanResult, scan_directory
 from backend.recognizer.recognizer import recognize, RecognizedInfo
 from backend.recognizer.pattern_matcher import is_junk_name
 from backend.namer.generator import NamingGenerator
+from backend.clients.translator import translate, get_api_key
 
 
 router = APIRouter(prefix="/api")
@@ -62,6 +63,27 @@ class ScanResponse(BaseModel):
 
 
 # ─── Routes ─────────────────────────────────────────────
+
+class TranslateRequest(BaseModel):
+    text: str
+    target_lang: str = "zh-CN"
+    source_lang: str = "auto"
+
+
+@router.post("/translate")
+async def translate_text(req: TranslateRequest):
+    """手动翻译文本（需配置 API Key）"""
+    key = get_api_key("google")
+    if not key:
+        raise HTTPException(
+            status_code=400,
+            detail="Translation API key not configured. Set GOOGLE_TRANSLATE_API_KEY env var or translators.google.api_key in config.",
+        )
+    result = await translate(req.text, req.target_lang, req.source_lang)
+    if result is None:
+        raise HTTPException(status_code=500, detail="Translation failed")
+    return {"status": "ok", "translated": result}
+
 
 @router.get("/status")
 async def status():

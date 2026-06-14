@@ -22,6 +22,7 @@ router = APIRouter(prefix="/api")
 class ScanRequest(BaseModel):
     root_path: str
     strategy: Optional[str] = "smart"
+    style: Optional[str] = "en"  # zh / en / bilingual / en_first
 
 
 class FileNodeResponse(BaseModel):
@@ -99,7 +100,10 @@ async def scan(req: ScanRequest):
     task_id = f"scan_{uuid.uuid4().hex[:12]}"
 
     # 命名风格取自配置
-    naming_style = config.get("naming.style.movie", "en")
+    naming_style = req.style or config.get("naming.style.movie", "en")
+    # en_first 是 bilingual 反向
+    if naming_style == "en_first":
+        naming_style = "bilingual_en_first"
     namer = NamingGenerator(style=naming_style)
 
     # 构建 parent→children 映射用于空目录检测

@@ -80,8 +80,8 @@ export interface ScanResponse {
 }
 
 /** 扫描目录 */
-export async function fetchScan(rootPath: string): Promise<ScanResponse> {
-  const { data } = await api.post<ScanResponse>("/scan", { root_path: rootPath, strategy: "smart" });
+export async function fetchScan(rootPath: string, style = "en"): Promise<ScanResponse> {
+  const { data } = await api.post<ScanResponse>("/scan", { root_path: rootPath, strategy: "smart", style });
   return data;
 }
 

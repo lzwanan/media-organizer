@@ -65,7 +65,7 @@ class NamingGenerator:
 
     def __init__(self, style: str = "en"):
         """
-        style: "zh" | "en" | "bilingual"
+        style: "zh" | "en" | "bilingual" | "bilingual_en_first"
         """
         self.style = style
 
@@ -115,6 +115,10 @@ class NamingGenerator:
             zh = info.title_zh or ""
             en = info.title_en or info.title
             title = f"{zh} {en}".strip()
+        elif self.style == "bilingual_en_first":
+            zh = info.title_zh or ""
+            en = info.title_en or info.title
+            title = f"{en} {zh}".strip()
         else:
             title = info.title
 

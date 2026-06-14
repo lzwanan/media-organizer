@@ -30,17 +30,28 @@
         </p>
 
         <!-- Filter tabs -->
-        <div class="flex gap-2 mb-6 flex-wrap">
-          <button v-for="f in filters" :key="f.key"
-            @click="activeFilter = f.key"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors"
-            :class="activeFilter === f.key
-              ? 'bg-indigo-500 text-white'
-              : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'"
-          >
-            {{ f.label }}
-            <span class="ml-1 opacity-70">{{ f.count }}</span>
-          </button>
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <div class="flex gap-2 flex-wrap">
+            <button v-for="f in filters" :key="f.key"
+              @click="activeFilter = f.key"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors"
+              :class="activeFilter === f.key
+                ? 'bg-indigo-500 text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'"
+            >
+              {{ f.label }}
+              <span class="ml-1 opacity-70">{{ f.count }}</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-gray-400">命名:</span>
+            <button v-for="s in namingStyles" :key="s.key" @click="namingStyle = s.key"
+              class="px-2.5 py-1 rounded-lg font-medium transition-colors"
+              :class="namingStyle === s.key
+                ? 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
+                : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'"
+            >{{ s.label }}</button>
+          </div>
         </div>
       </header>
 
@@ -120,8 +131,16 @@ const router = useRouter();
 const toast = useToast();
 const scanStore = useScanStore();
 const activeFilter = ref("all");
+const namingStyle = ref("en");
 const selectedPaths = reactive<Set<string>>(new Set());
 const showConfirm = ref(false);
+
+const namingStyles = [
+  { key: "zh", label: "中" },
+  { key: "en", label: "EN" },
+  { key: "bilingual", label: "中+EN" },
+  { key: "en_first", label: "EN+中" },
+];
 
 onMounted(() => {
   if (!scanStore.result) {

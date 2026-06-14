@@ -152,8 +152,6 @@ onMounted(() => {
 
 const allItems = computed(() => scanStore.result?.items ?? []);
 
-const junkCount = computed(() => allItems.value.filter(n => n.junk).length);
-const emptyCount = computed(() => allItems.value.filter(n => n.empty).length);
 const movieCount = computed(() => allItems.value.filter(n => n.recognized?.media_type === "movie").length);
 const tvCount = computed(() => allItems.value.filter(n => n.recognized?.media_type === "tv").length);
 
@@ -161,8 +159,6 @@ const filters = computed(() => [
   { key: "all", label: t("scan.filters.all"), count: allItems.value.length },
   { key: "movie", label: t("scan.filters.movie"), count: movieCount.value },
   { key: "tv", label: t("scan.filters.tv"), count: tvCount.value },
-  { key: "junk", label: t("scan.filters.junk"), count: junkCount.value },
-  { key: "empty", label: t("scan.filters.empty"), count: emptyCount.value },
 ]);
 
 /** Root-level children filtered */
@@ -173,8 +169,6 @@ const rootChildren = computed(() => {
   const all = tree[root] ?? [];
 
   if (activeFilter.value === "all") return all;
-  if (activeFilter.value === "junk") return all.filter(n => n.junk);
-  if (activeFilter.value === "empty") return all.filter(n => n.empty);
   if (activeFilter.value === "movie") return all.filter(n => n.recognized?.media_type === "movie");
   if (activeFilter.value === "tv") return all.filter(n => n.recognized?.media_type === "tv");
   return all;

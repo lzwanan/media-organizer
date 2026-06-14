@@ -67,8 +67,6 @@ export interface FileNodeResponse {
   depth: number;
   extension: string;
   recognized: RecognizedInfo | null;
-  junk: boolean;
-  empty: boolean;
 }
 
 export interface ScanResponse {

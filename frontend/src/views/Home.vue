@@ -14,8 +14,8 @@
           <rect x="20" y="38" width="24" height="4" rx="2" fill="white" opacity="0.5"/>
         </svg>
       </div>
-      <h1 class="hero-title">Media Organizer</h1>
-      <p class="hero-subtitle">智能识别混乱的媒体文件名，一键整理为 Plex / Emby / Jellyfin 标准格式</p>
+      <h1 class="hero-title text-gray-900 dark:text-gray-100">Media Organizer</h1>
+      <p class="hero-subtitle text-gray-500 dark:text-gray-400">智能识别混乱的媒体文件名，一键整理为 Plex / Emby / Jellyfin 标准格式</p>
     </section>
 
     <!-- Action Card -->
@@ -28,7 +28,7 @@
       <div class="card-glass">
         <!-- Directory input -->
         <div class="field">
-          <label class="field-label">
+          <label class="field-label text-gray-700 dark:text-gray-300">
             <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
             </svg>
@@ -49,7 +49,7 @@
 
         <!-- Strategy selector -->
         <div class="field">
-          <label class="field-label">
+          <label class="field-label text-gray-700 dark:text-gray-300">
             <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
             </svg>

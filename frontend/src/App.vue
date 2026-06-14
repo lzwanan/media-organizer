@@ -1,5 +1,5 @@
 <template>
-  <div :class="['app-shell', { 'app-dark': appStore.darkMode }]">
+  <div class="app-shell">
     <!-- Toast container -->
     <Toast position="top-right" />
 
@@ -76,6 +76,7 @@ const navItems = [
 ];
 
 onMounted(async () => {
+  appStore.init();
   try {
     const res = await fetchStatus();
     appStore.setBackendStatus("online", res.version);

@@ -20,14 +20,23 @@ export const useAppStore = defineStore("app", {
   },
 
   actions: {
+    _applyDarkMode() {
+      document.documentElement.classList.toggle("app-dark", this.darkMode);
+    },
+
     toggleDarkMode() {
       this.darkMode = !this.darkMode;
-      document.documentElement.classList.toggle("app-dark", this.darkMode);
+      this._applyDarkMode();
     },
 
     setBackendStatus(status: AppState["backendStatus"], version = "") {
       this.backendStatus = status;
       if (version) this.backendVersion = version;
+    },
+
+    /** 首次加载时同步 OS 偏好到 DOM */
+    init() {
+      this._applyDarkMode();
     },
   },
 });

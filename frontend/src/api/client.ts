@@ -85,4 +85,17 @@ export async function fetchScan(rootPath: string, style = "en"): Promise<ScanRes
   return data;
 }
 
+export interface RenamePreviewItem {
+  path: string;
+  target_name: string;
+  target_dir: string;
+  target_path: string;
+}
+
+/** 轻量重命名预览（不重新扫描） */
+export async function fetchRenamePreview(items: Array<{ path: string; original_name?: string; title?: string | null; year?: number | null; season?: number | null; episode?: number | null; quality?: string | null; edition?: string | null; media_type?: string; extension?: string }>, style: string): Promise<{ status: string; style: string; items: RenamePreviewItem[] }> {
+  const { data } = await api.post("/rename-preview", { items, style });
+  return data;
+}
+
 export default api;

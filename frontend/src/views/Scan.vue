@@ -118,16 +118,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive, onMounted } from "vue";
+import { computed, ref, reactive, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useToast } from "primevue/usetoast";
 import Dialog from "primevue/dialog";
 import { useScanStore } from "@/stores/scan";
-import type { FileNodeResponse } from "@/api/client";
+import { fetchRenamePreview, type FileNodeResponse } from "@/api/client";
 import SectionCard from "@/components/SectionCard.vue";
 import TreeNode from "@/components/TreeNode.vue";
 
 const router = useRouter();
+const { t } = useI18n();
 const toast = useToast();
 const scanStore = useScanStore();
 const activeFilter = ref("all");
@@ -156,11 +158,11 @@ const movieCount = computed(() => allItems.value.filter(n => n.recognized?.media
 const tvCount = computed(() => allItems.value.filter(n => n.recognized?.media_type === "tv").length);
 
 const filters = computed(() => [
-  { key: "all", label: "All", count: allItems.value.length },
-  { key: "movie", label: "Movies", count: movieCount.value },
-  { key: "tv", label: "TV", count: tvCount.value },
-  { key: "junk", label: "Junk", count: junkCount.value },
-  { key: "empty", label: "Empty", count: emptyCount.value },
+  { key: "all", label: t("scan.filters.all"), count: allItems.value.length },
+  { key: "movie", label: t("scan.filters.movie"), count: movieCount.value },
+  { key: "tv", label: t("scan.filters.tv"), count: tvCount.value },
+  { key: "junk", label: t("scan.filters.junk"), count: junkCount.value },
+  { key: "empty", label: t("scan.filters.empty"), count: emptyCount.value },
 ]);
 
 /** Root-level children filtered */
@@ -202,4 +204,38 @@ function confirmDelete() {
   selectedPaths.clear();
   toast.add({ severity: "success", summary: "Deleted", detail: `${count} items removed from list.`, life: 3000 });
 }
+
+/** 命名风格切换 → 调 API 刷新目标名 */
+watch(namingStyle, async (style) => {
+  if (!scanStore.result) return;
+  const items = scanStore.result.items
+    .filter(n => n.recognized)
+    .map(n => ({
+      path: n.path,
+      original_name: n.name,
+      title: n.recognized!.title,
+      year: n.recognized!.year,
+      season: n.recognized!.season,
+      episode: n.recognized!.episode,
+      quality: n.recognized!.quality,
+      edition: n.recognized!.edition,
+      media_type: n.recognized!.media_type,
+      extension: n.extension,
+    }));
+  if (items.length === 0) return;
+  try {
+    const res = await fetchRenamePreview(items, style);
+    const map = new Map(res.items.map(i => [i.path, i]));
+    for (const node of scanStore.result.items) {
+      const updated = map.get(node.path);
+      if (updated && node.recognized) {
+        node.recognized.target_name = updated.target_name;
+        node.recognized.target_dir = updated.target_dir;
+        node.recognized.target_path = updated.target_path;
+      }
+    }
+  } catch {
+    toast.add({ severity: "error", summary: "Error", detail: "Failed to update names", life: 3000 });
+  }
+});
 </script>

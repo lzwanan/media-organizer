@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 from backend.config_manager import ConfigManager
 from backend.scanner.scanner import FileNode, ScanResult, scan_directory
-from backend.recognizer.recognizer import recognize, RecognizedInfo
+from backend.recognizer.recognizer import recognize, RecognizedInfo, MediaType
 from backend.recognizer.pattern_matcher import is_junk_name
 from backend.namer.generator import NamingGenerator
 from backend.clients.translator import translate, get_api_key
@@ -83,6 +83,64 @@ async def translate_text(req: TranslateRequest):
     if result is None:
         raise HTTPException(status_code=500, detail="Translation failed")
     return {"status": "ok", "translated": result}
+
+
+class RenamePreviewRequest(BaseModel):
+    items: list[dict]   # [{original_name, title, year, media_type, ...}]
+    style: str = "en"
+
+
+class RenamePreviewItem(BaseModel):
+    path: str
+    target_name: str
+    target_dir: str
+    target_path: str
+
+
+@router.post("/rename-preview")
+async def rename_preview(req: RenamePreviewRequest):
+    """根据命名风格重新生成目标名称（不重新扫描）"""
+    naming_style = req.style
+    if naming_style == "en_first":
+        naming_style = "bilingual_en_first"
+
+    namer = NamingGenerator(style=naming_style)
+    results: list[dict] = []
+
+    for item in req.items:
+        title = item.get("title", "")
+        year = item.get("year")
+        season = item.get("season")
+        episode = item.get("episode")
+        quality = item.get("quality")
+        edition = item.get("edition")
+        media_type = item.get("media_type", "unknown")
+        ext = item.get("extension", ".mkv")
+
+        # 构建 RecognizedInfo
+        info = RecognizedInfo(
+            original_name=item.get("original_name", title),
+            title=title,
+            year=year,
+            season=season,
+            episode=episode,
+            quality=quality,
+            edition=edition,
+        )
+        try:
+            info.media_type = MediaType(media_type)
+        except ValueError:
+            info.media_type = MediaType.UNKNOWN
+
+        naming = namer.generate(info, ext=ext)
+        results.append({
+            "path": item.get("path", ""),
+            "target_name": naming.filename,
+            "target_dir": naming.directory,
+            "target_path": naming.full_path,
+        })
+
+    return {"status": "ok", "style": req.style, "items": results}
 
 
 @router.get("/status")

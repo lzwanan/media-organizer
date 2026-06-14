@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ====== Media Organizer ======
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# App runtime
+.organizer_backup/
+*.db

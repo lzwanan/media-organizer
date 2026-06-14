@@ -1,0 +1,57 @@
+{
+  "version": "1.0",
+  "scan": {
+    "max_depth": 5,
+    "exclude_hidden": true,
+    "exclude_extensions": [".tmp", ".cache", ".log", ".srt"],
+    "max_file_size_mb": 10240
+  },
+  "recognition": {
+    "auto_accept_threshold": 0.85,
+    "data_source": "tmdb",
+    "priority": ["local_history", "tmdb"]
+  },
+  "naming": {
+    "style": {
+      "movie": "en",
+      "tv": "en",
+      "anime": "en"
+    },
+    "templates": {
+      "movie": {
+        "directory": "{title_en} ({year})",
+        "filename": "{title_en} ({year}){suffix}"
+      },
+      "tv": {
+        "directory": "{title_en} ({year})",
+        "season_dir": "Season {season:02d}",
+        "filename": "{title_en} S{season:02d}E{episode:02d}{suffix}"
+      },
+      "anime": {
+        "directory": "{title_en} ({year})",
+        "season_dir": "Season {season:02d}",
+        "filename": "{title_en} S{season:02d}E{episode:02d}{suffix}"
+      }
+    },
+    "edition_keywords": ["高码", "导演剪辑", "加长", "未分级", "收藏版", "60fps", "HDR"]
+  },
+  "media_types": {
+    "movie": ["movie", "movies", "film", "films", "电影"],
+    "tv": ["tv", "tvs", "series", "show", "shows", "电视剧"],
+    "anime": ["anime", "动漫", "cartoon"],
+    "music": ["music", "musics", "音乐"],
+    "other": ["other", "others", "misc", "其他"]
+  },
+  "tmdb": {
+    "api_key": "",
+    "language": "zh-CN",
+    "cache_ttl_hours": 168
+  },
+  "execution": {
+    "conflict_strategy": "skip",
+    "backup_before_rename": true,
+    "dry_run_default": true,
+    "batch_size": 100
+  },
+  "custom_patterns": []
+}

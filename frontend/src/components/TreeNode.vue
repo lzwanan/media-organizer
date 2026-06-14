@@ -1,11 +1,11 @@
 <template>
   <div>
     <!-- Directory -->
-    <div v-if="node.type === 'directory'" class="flex items-center gap-1">
+    <div v-if="node.type === 'directory'" class="flex items-center gap-1 min-w-0">
       <input type="checkbox" :checked="isSelected" @change="$emit('toggle-select', node.path)"
         class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-indigo-500 shrink-0" />
       <button @click="expanded = !expanded"
-        class="flex-1 flex items-center gap-2 px-2 py-2 ml-0.5 rounded-lg text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+        class="flex-1 min-w-0 flex items-center gap-2 px-2 py-2 ml-0.5 rounded-lg text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
         <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 shrink-0" :class="{ 'rotate-90': expanded }"
           fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -35,10 +35,10 @@
     </div>
 
     <!-- File -->
-    <div v-else class="flex items-center gap-1">
+    <div v-else class="flex items-center gap-1 min-w-0">
       <input type="checkbox" :checked="isSelected" @change="$emit('toggle-select', node.path)"
         class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-indigo-500 shrink-0" />
-      <div class="flex-1 px-2 py-2 ml-0.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+      <div class="flex-1 min-w-0 px-2 py-2 ml-0.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
         <!-- Before row -->
         <div class="flex items-center gap-2">
           <svg class="w-4 h-4 text-gray-300 dark:text-gray-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">

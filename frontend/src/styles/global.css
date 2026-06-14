@@ -1,75 +1,39 @@
 @import "tailwindcss";
 
-/* Tailwind 暗色模式：跟随 .app-dark 类（与 PrimeVue 同步） */
+/* Tailwind dark mode — sync with PrimeVue's .app-dark class */
 @variant dark (&:where(.app-dark, .app-dark *));
 
-/* ========== Global Styles — Media Organizer ========== */
-
-/* Base */
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
+/* ========== Reset & Base ========== */
 html {
   scroll-behavior: smooth;
-  background: #f9fafb;
-}
-.app-dark {
-  background: #0f172a;
-}
-body {
-  background: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgb(148 163 184 / 0.5);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(148 163 184 / 0.8);
-}
+/* ========== Scrollbar ========== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(148 163 184 / 0.35); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(148 163 184 / 0.55); }
 
-/* Selection color */
-::selection {
-  background: rgba(99, 102, 241, 0.2);
-}
+/* ========== Selection ========== */
+::selection { background: rgb(99 102 241 / 0.18); }
 
-/* Focus ring */
-*:focus-visible {
-  outline: 2px solid #6366f1;
-  outline-offset: 2px;
-}
-
-/* Page transition */
+/* ========== Page transitions ========== */
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 .page-enter-from {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(6px);
 }
 .page-leave-to {
   opacity: 0;
-  transform: translateY(-8px);
+  transform: translateY(-6px);
 }
 
-/* Stagger list animation helper */
-.stagger-item {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-/* ========== Custom theme — brand colors ========== */
+/* ========== Theme: brand colors ========== */
 @theme {
   --color-brand-50: #eef2ff;
   --color-brand-100: #e0e7ff;
@@ -83,61 +47,3 @@ body {
   --color-brand-900: #312e81;
   --color-brand-950: #1e1b4b;
 }
-
-/* ========== Glass morphism card ========== */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(229, 231, 235, 0.6);
-}
-.dark .glass,
-.app-dark .glass {
-  background: rgba(17, 24, 39, 0.7);
-  border-color: rgba(55, 65, 81, 0.4);
-}
-
-/* ========== Home page dark mode overrides ========== */
-.app-dark .hero-title { color: #f3f4f6 !important; }
-.app-dark .hero-subtitle { color: #9ca3af !important; }
-.app-dark .card-glass {
-  background: rgba(17,24,39,.75) !important;
-  border-color: rgba(55,65,81,.5) !important;
-}
-.app-dark .dir-input {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #f3f4f6 !important;
-}
-.app-dark .dir-input:focus {
-  background: #111827 !important;
-  border-color: #818cf8 !important;
-}
-.app-dark .dir-input::placeholder { color: #6b7280 !important; }
-.app-dark .browse-btn {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #9ca3af !important;
-}
-.app-dark .browse-btn:hover { background: #374151 !important; border-color: #4b5563 !important; }
-.app-dark .strategy-btn {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
-}
-.app-dark .strategy-btn.active {
-  background: rgba(49,46,129,.3) !important;
-  border-color: #6366f1 !important;
-}
-.app-dark .strategy-label { color: #d1d5db !important; }
-.app-dark .strategy-btn.active .strategy-label { color: #a5b4fc !important; }
-.app-dark .strategy-desc { color: #6b7280 !important; }
-.app-dark .start-btn {
-  background: #374151 !important;
-  color: #6b7280 !important;
-}
-.app-dark .start-btn.ready {
-  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
-  color: #fff !important;
-}
-.app-dark .feature-title { color: #e5e7eb !important; }
-.app-dark .feature-sub { color: #6b7280 !important; }

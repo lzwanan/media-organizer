@@ -3,7 +3,7 @@
     <div class="max-w-6xl mx-auto px-6 h-9 flex items-center gap-3 text-xs">
       <span class="flex items-center gap-1.5" :class="appStore.isOnline ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'">
         <span class="w-1.5 h-1.5 rounded-full" :class="appStore.isOnline ? 'bg-emerald-500' : 'bg-red-500'" />
-        {{ appStore.isOnline ? 'Connected' : 'Disconnected' }}
+        {{ appStore.isOnline ? $t('status.connected') : $t('status.disconnected') }}
       </span>
       <span class="text-gray-300 dark:text-gray-700">·</span>
       <span class="text-gray-400 dark:text-gray-600">v{{ appStore.backendVersion || '—' }}</span>

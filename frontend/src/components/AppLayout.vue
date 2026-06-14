@@ -15,11 +15,19 @@
 
         <!-- Nav links -->
         <nav class="flex items-center gap-0.5">
-          <NavItem to="/" label="Home" />
-          <NavItem to="/history" label="History" />
-          <NavItem to="/settings" label="Settings" />
+          <NavItem to="/">{{ $t("nav.home") }}</NavItem>
+          <NavItem to="/history">{{ $t("nav.history") }}</NavItem>
+          <NavItem to="/settings">{{ $t("nav.settings") }}</NavItem>
 
           <div class="w-px h-5 bg-gray-200 dark:bg-gray-800 mx-2" />
+
+          <!-- Language toggle -->
+          <button
+            @click="toggleLocale"
+            class="px-2 py-1 rounded-lg text-[12px] font-semibold text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors tracking-wide"
+          >
+            {{ currentLocale === 'zh-CN' ? 'EN' : '中' }}
+          </button>
 
           <!-- Theme toggle -->
           <button
@@ -50,12 +58,23 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import NavItem from "./NavItem.vue";
 import StatusBar from "./StatusBar.vue";
 import { useAppStore } from "@/stores/app";
 import { fetchStatus } from "@/api/client";
+import { saveLocale } from "@/i18n";
 
+const { locale } = useI18n();
 const appStore = useAppStore();
+
+const currentLocale = locale;
+
+function toggleLocale() {
+  const next = locale.value === "zh-CN" ? "en-US" : "zh-CN";
+  locale.value = next;
+  saveLocale(next);
+}
 
 onMounted(async () => {
   appStore.init();

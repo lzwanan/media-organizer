@@ -17,8 +17,8 @@
         <div class="flex-1 min-w-0 text-left">
           <div class="flex items-center gap-2">
             <span class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-[420px]" :title="node.name">{{ node.name }}</span>
-            <span v-if="node.junk" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400">Junk</span>
-            <span v-if="node.empty" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500">Empty</span>
+            <span v-if="node.junk" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400">{{ $t('scan.filters.junk') }}</span>
+            <span v-if="node.empty" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500">{{ $t('scan.filters.empty') }}</span>
           </div>
           <div v-if="recInfo?.target_name && recInfo.target_name !== node.name" class="mt-0.5">
             <span class="text-xs text-indigo-500 dark:text-indigo-400">→ {{ recInfo.target_name }}</span>
@@ -49,7 +49,7 @@
               d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
           </svg>
           <span class="text-xs text-gray-500 dark:text-gray-500 truncate flex-1 font-mono max-w-[500px]" :title="node.name">{{ node.name }}</span>
-          <span v-if="node.junk" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 shrink-0">Junk</span>
+          <span v-if="node.junk" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 shrink-0">{{ $t('scan.filters.junk') }}</span>
           <span v-else-if="recInfo" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
             :class="confidenceClass(recInfo.confidence)">{{ Math.round(recInfo.confidence * 100) }}%</span>
           <span class="text-[10px] text-gray-400 shrink-0">{{ formatSize(node.size) }}</span>
@@ -61,10 +61,10 @@
           <span class="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate max-w-[500px]" :title="recInfo.target_name">{{ recInfo.target_name }}</span>
         </div>
         <div v-if="!recInfo && !node.junk" class="flex items-center gap-2 mt-1 pl-6">
-          <span class="text-xs text-amber-500">⚠ Pending</span>
+          <span class="text-xs text-amber-500">⚠ {{ $t('scan.pending') }}</span>
         </div>
         <div v-if="node.junk" class="flex items-center gap-2 mt-1 pl-6">
-          <span class="text-xs text-red-400">🗑 Suggested for removal</span>
+          <span class="text-xs text-red-400">🗑 {{ $t('scan.suggestedRemove') }}</span>
         </div>
       </div>
     </div>

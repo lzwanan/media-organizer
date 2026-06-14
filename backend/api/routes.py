@@ -220,9 +220,7 @@ async def scan(req: ScanRequest):
                 rec["target_name"] = naming.filename
                 rec["target_dir"] = naming.directory
                 rec["target_path"] = naming.full_path
-            else:
-                # 无法识别的文件 → 标记为 junk
-                is_junk = True
+            # 无法识别的文件不是 junk，只是 pending — 保持 is_junk=False
 
         elif node.type == "directory":
             # 目录识别

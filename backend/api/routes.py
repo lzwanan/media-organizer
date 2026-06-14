@@ -8,7 +8,8 @@ from pydantic import BaseModel
 
 from backend.config_manager import ConfigManager
 from backend.scanner.scanner import FileNode, ScanResult, scan_directory
-from backend.recognizer.recognizer import recognize
+from backend.recognizer.recognizer import recognize, RecognizedInfo
+from backend.namer.generator import NamingGenerator
 
 
 router = APIRouter(prefix="/api")
@@ -91,7 +92,11 @@ async def scan(req: ScanRequest):
 
     task_id = f"scan_{uuid.uuid4().hex[:12]}"
 
-    # 对每个文件运行识别
+    # 命名风格取自配置
+    naming_style = config.get("naming.style.movie", "en")
+    namer = NamingGenerator(style=naming_style)
+
+    # 对每个文件运行识别 + 命名预览
     items: list[FileNodeResponse] = []
     for node in result.items:
         rec = None
@@ -99,6 +104,11 @@ async def scan(req: ScanRequest):
             info = recognize(node.name)
             if info:
                 rec = info.to_dict()
+                # 生成预览命名
+                naming = namer.generate(info, ext=node.extension if node.extension else ".mkv")
+                rec["target_name"] = naming.filename
+                rec["target_dir"] = naming.directory
+                rec["target_path"] = naming.full_path
         items.append(FileNodeResponse.from_node(node, recognized=rec))
 
     return ScanResponse(

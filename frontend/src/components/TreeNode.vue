@@ -43,42 +43,40 @@
     <!-- File -->
     <div
       v-else
-      class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-left
-             hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+      class="px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
     >
-      <svg class="w-4 h-4 text-gray-300 dark:text-gray-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-      </svg>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
-            {{ recInfo?.title || node.name }}
-          </span>
-          <span v-if="recInfo?.year" class="text-xs text-gray-400 dark:text-gray-500">
-            ({{ recInfo.year }})
-          </span>
-          <!-- Confidence badge -->
-          <span v-if="recInfo"
-            class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
-            :class="confidenceClass(recInfo.confidence)"
-          >
-            {{ Math.round(recInfo.confidence * 100) }}%
-          </span>
-        </div>
-        <div v-if="recInfo" class="flex items-center gap-2 mt-0.5">
-          <span class="text-xs text-gray-400 dark:text-gray-500 truncate">{{ node.name }}</span>
-          <span class="text-[10px] text-indigo-500 dark:text-indigo-400 font-medium">
-            {{ recInfo.media_type }}
-          </span>
-          <span v-if="recInfo.quality" class="text-[10px] text-gray-400">{{ recInfo.quality }}</span>
-          <span v-if="recInfo.edition" class="text-[10px] text-gray-400">{{ recInfo.edition }}</span>
-        </div>
-        <div v-else class="text-xs text-amber-500 dark:text-amber-400 mt-0.5">
-          Pending — click to assign manually
-        </div>
+      <!-- Before row -->
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-gray-300 dark:text-gray-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+        <span class="text-xs text-gray-500 dark:text-gray-500 truncate flex-1 font-mono">
+          {{ node.name }}
+        </span>
+        <span v-if="recInfo"
+          class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
+          :class="confidenceClass(recInfo.confidence)"
+        >
+          {{ Math.round(recInfo.confidence * 100) }}%
+        </span>
+        <span class="text-[10px] text-gray-400 shrink-0">{{ formatSize(node.size) }}</span>
       </div>
-      <span class="text-xs text-gray-400 shrink-0 self-start mt-0.5">{{ formatSize(node.size) }}</span>
+
+      <!-- After row (recognized) -->
+      <div v-if="recInfo?.target_name" class="flex items-center gap-2 mt-1 pl-6">
+        <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+        <span class="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">
+          {{ recInfo.target_name }}
+        </span>
+      </div>
+
+      <!-- Pending -->
+      <div v-if="!recInfo" class="flex items-center gap-2 mt-1 pl-6">
+        <span class="text-xs text-amber-500">⚠ Pending — no match</span>
+      </div>
     </div>
   </div>
 </template>

@@ -53,6 +53,9 @@ export interface RecognizedInfo {
   confidence: number;
   media_type: string;
   source: string;
+  target_name?: string;
+  target_dir?: string;
+  target_path?: string;
 }
 
 export interface FileNodeResponse {
